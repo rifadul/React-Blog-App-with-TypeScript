@@ -86,7 +86,7 @@ export const Post = () => {
                                 <TableCell align="left">Author</TableCell>
                                 <TableCell align="left">Source Url</TableCell>
                                 <TableCell align="left">Create at</TableCell>
-                                <TableCell align="left">View details</TableCell>
+                                {/* <TableCell align="left">View details</TableCell> */}
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -100,7 +100,10 @@ export const Post = () => {
                                                 {
                                                     border: 0,
                                                 },
-                                        }}>
+                                        }}
+                                        onClick={() =>
+                                            getDetails(item)
+                                        }>
                                         <TableCell component="th" scope="row">
                                             {title}
                                         </TableCell>
@@ -113,7 +116,7 @@ export const Post = () => {
                                         <TableCell align="right">
                                             {created_at}
                                         </TableCell>
-                                        <TableCell align="right">
+                                        {/* <TableCell align="right">
                                             <Button
                                                 size="medium"
                                                 variant="contained"
@@ -122,7 +125,7 @@ export const Post = () => {
                                                 }>
                                                 Details
                                             </Button>
-                                        </TableCell>
+                                        </TableCell> */}
                                     </TableRow>
                                 );
                             })}
