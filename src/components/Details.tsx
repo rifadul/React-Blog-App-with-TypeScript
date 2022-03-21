@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
-import { InitPost } from './Post';
+import { InitPost } from './PostInfiniteScroll_AnotherWay';
 
 export const Details = () => {
     const { state } = useLocation();

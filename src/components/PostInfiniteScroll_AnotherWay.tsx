@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import { useNavigate } from 'react-router-dom';
-import TablePagination from '@mui/material/TablePagination';
 
 import {
     Container,
@@ -12,6 +12,7 @@ import {
     TableContainer,
     TableHead,
     TableRow,
+    Button,
 } from '@mui/material';
 
 export interface InitPost {
@@ -27,24 +28,20 @@ export const Post = () => {
     const [pageNumber, setPageNumber] = useState(0);
     const navigate = useNavigate();
 
-    // // pagination
-    const [page, setPage] = useState<number>(0);
-    const [totalElements, setTotalElements] = useState<number>(0);
-    const rowsPerPage = 20;
-
     useEffect(() => {
         getPostData();
-        const myTimeout = setInterval(() => {
-            setPageNumber((pageNumber) => pageNumber + 1);
-        }, 10000);
+        const myTimeout = setInterval(fetchData, 10000);
 
         return () => {
             clearInterval(myTimeout);
         };
-    }, [pageNumber]);
+    }, []);
 
-    const handleChangePage = async (event: unknown, newPage: number) => {
-        setPage(newPage);
+    const fetchData = () => {
+        // console.log('Scroll');
+
+        setPageNumber((pageNumber) => pageNumber + 1);
+        getPostData();
     };
 
     const getPostData = async () => {
@@ -52,37 +49,49 @@ export const Post = () => {
             const response = await axios.get(
                 `https://hn.algolia.com/api/v1/search_by_date?tags=story&page=${pageNumber}`
             );
+            // console.log('pre data',data);
+            // console.log(response.data.hits);
+
             setData((data) => [...data, ...response.data.hits]);
-            const pageLength = [...data, ...response.data.hits].length;
-            setTotalElements(pageLength);
         } catch (error) {
             console.error(error);
         }
     };
+
     const getDetails = (post: InitPost) => {
+        // navigate({
+        //     pathname: '/details',
+        //     state: post
+        // })
+        // navigate(`/details/${countryName}`,state: post);
         navigate(`/details/${post.objectID}`, { state: post });
     };
 
     return (
         <Container maxWidth="xl">
-            
-            <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Title</TableCell>
-                            <TableCell align="left">Author</TableCell>
-                            <TableCell align="left">Source Url</TableCell>
-                            <TableCell align="left">Create at</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {data
-                            .slice(
-                                page * rowsPerPage,
-                                page * rowsPerPage + rowsPerPage
-                            )
-                            .map((item, i) => {
+            <InfiniteScroll
+                dataLength={data.length} //This is important field to render the next data
+                next={fetchData}
+                hasMore={data.length < 1500}
+                loader={<h4>Loading...</h4>}
+                endMessage={
+                    <p style={{ textAlign: 'center' }}>
+                        <b>Yay! You have seen it all</b>
+                    </p>
+                }>
+                <TableContainer component={Paper}>
+                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Title</TableCell>
+                                <TableCell align="left">Author</TableCell>
+                                <TableCell align="left">Source Url</TableCell>
+                                <TableCell align="left">Create at</TableCell>
+                                {/* <TableCell align="left">View details</TableCell> */}
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {data.map((item, i) => {
                                 const { title, author, url, created_at } = item;
                                 return (
                                     <TableRow
@@ -93,7 +102,9 @@ export const Post = () => {
                                                     border: 0,
                                                 },
                                         }}
-                                        onClick={() => getDetails(item)}>
+                                        onClick={() =>
+                                            getDetails(item)
+                                        }>
                                         <TableCell component="th" scope="row">
                                             {title}
                                         </TableCell>
@@ -106,23 +117,23 @@ export const Post = () => {
                                         <TableCell align="right">
                                             {created_at}
                                         </TableCell>
+                                        {/* <TableCell align="right">
+                                            <Button
+                                                size="medium"
+                                                variant="contained"
+                                                onClick={() =>
+                                                    getDetails(item)
+                                                }>
+                                                Details
+                                            </Button>
+                                        </TableCell> */}
                                     </TableRow>
                                 );
                             })}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-
-            {/* pagination */}
-
-            <TablePagination
-                rowsPerPageOptions={[]}
-                component="div"
-                count={totalElements}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={handleChangePage}
-            />
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </InfiniteScroll>
         </Container>
     );
 };
