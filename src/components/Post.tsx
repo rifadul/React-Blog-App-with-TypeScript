@@ -44,6 +44,8 @@ export const Post = () => {
     }, [pageNumber]);
 
     const handleChangePage = async (event: unknown, newPage: number) => {
+        console.log('my page changed',newPage);
+        
         setPage(newPage);
     };
 
@@ -64,8 +66,8 @@ export const Post = () => {
     };
 
     return (
-        <Container maxWidth="xl">
-            
+        <Container maxWidth="xl" data-testid="post-list" >
+            <h1>All blog posts</h1>
             <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead>
@@ -115,14 +117,19 @@ export const Post = () => {
 
             {/* pagination */}
 
-            <TablePagination
+<TablePagination
                 rowsPerPageOptions={[]}
                 component="div"
                 count={totalElements}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={handleChangePage}
-            />
+                data-testid={"pagination"}
+            /> 
+            <br />
+            <br />
+            <br />
+            <br />
         </Container>
     );
 };
