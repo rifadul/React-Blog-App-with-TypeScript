@@ -7,7 +7,18 @@ import { Details } from '../components/Details';
 describe('App Router', () => {
     beforeEach(() => {
         jest.spyOn(axios, 'get').mockResolvedValue({
-            data: { hits: 0 },
+            data: {
+                hits: [
+                    {
+                        created_at: '2022-02-12T12:10:12.000Z',
+                        title: 'Can GPT-3 AI write comedy?',
+                        url: 'https://robmanuelfuckyeah.substack.com/p/someone-needs-to-stop-me-playing',
+                        author: 'rossvor',
+                        created_at_i: 1644667812,
+                        objectID: '30312182',
+                    },
+                ],
+            },
         });
     });
 
@@ -23,8 +34,8 @@ describe('App Router', () => {
 
     test('should render Details component with path "details/id"', async () => {
         render(
-            <MemoryRouter initialEntries={['details/1']}>
-                <Details />
+            <MemoryRouter initialEntries={['/details/1']}>
+                <App />
             </MemoryRouter>
         );
 

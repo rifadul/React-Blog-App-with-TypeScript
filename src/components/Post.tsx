@@ -5,6 +5,7 @@ import TablePagination from '@mui/material/TablePagination';
 
 import {
     Container,
+    Pagination,
     Paper,
     Table,
     TableBody,
@@ -32,6 +33,15 @@ export const Post = () => {
     const [totalElements, setTotalElements] = useState<number>(0);
     const rowsPerPage = 20;
 
+    let pageCount = totalElements / rowsPerPage;
+    // let pageCount = perse;
+
+    // console.log('pageCount: ', pageCount);
+    // console.log('rowsPerPage: ', rowsPerPage);
+    // console.log('totalElements: ', totalElements);
+
+    // let pageCount = parseInt((data.length / rowsPerPage).toString());
+
     useEffect(() => {
         getPostData();
         const myTimeout = setInterval(() => {
@@ -44,8 +54,8 @@ export const Post = () => {
     }, [pageNumber]);
 
     const handleChangePage = async (event: unknown, newPage: number) => {
-        console.log('my page changed',newPage);
-        
+        // console.log('my page changed',newPage);
+
         setPage(newPage);
     };
 
@@ -54,8 +64,17 @@ export const Post = () => {
             const response = await axios.get(
                 `https://hn.algolia.com/api/v1/search_by_date?tags=story&page=${pageNumber}`
             );
+            console.log('response',response);
+            
+            // let resData = response.data.hits;
+            // console.log(resData);
+            // let _data = [...data, ...resData];
+            // setData(_data);
+            // setTotalElements(_data.length);
+            // setData((data) => [...data, ...resData.hits]);
             setData((data) => [...data, ...response.data.hits]);
             const pageLength = [...data, ...response.data.hits].length;
+            // const pageLength = [...data, ...response.data.hits].length;
             setTotalElements(pageLength);
         } catch (error) {
             console.error(error);
@@ -66,7 +85,7 @@ export const Post = () => {
     };
 
     return (
-        <Container maxWidth="xl" data-testid="post-list" >
+        <Container maxWidth="xl" data-testid="post-list">
             <h1>All blog posts</h1>
             <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -117,7 +136,7 @@ export const Post = () => {
 
             {/* pagination */}
 
-<TablePagination
+            {/* <TablePagination
                 rowsPerPageOptions={[]}
                 component="div"
                 count={totalElements}
@@ -125,9 +144,17 @@ export const Post = () => {
                 page={page}
                 onPageChange={handleChangePage}
                 data-testid={"pagination"}
-            /> 
+            />  */}
             <br />
             <br />
+
+            <Pagination
+                count={Math.round(pageCount)}
+                page={page}
+                onChange={handleChangePage}
+                data-testid={'pagination'}
+            />
+
             <br />
             <br />
         </Container>
